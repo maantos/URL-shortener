@@ -18,7 +18,7 @@ type mongoRepository struct {
 	timeout  time.Duration
 }
 
-func NewMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
+func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(mongoTimeout)*time.Second)
 	defer cancel()
 
@@ -33,12 +33,13 @@ func NewMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	return client, nil
 }
 
+// NewMongoRepository creates new mongo client and wraps it into mongoRepository struct
 func NewMongoRepository(mongoURL string, mongoDb string, mongoTimeout int) (shortener.RedirectRepository, error) {
 	repo := &mongoRepository{
 		timeout:  time.Duration(mongoTimeout) * time.Second,
 		database: mongoDb,
 	}
-	client, err := NewMongoClient(mongoURL, mongoTimeout)
+	client, err := newMongoClient(mongoURL, mongoTimeout)
 	if err != nil {
 		return nil, errors.Wrap(err, "repository.NewMongoRepository")
 	}

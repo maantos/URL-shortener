@@ -13,8 +13,7 @@ type redisRepository struct {
 	client *redis.Client
 }
 
-// NewRedisClients creates new a client and try to connect
-func NewRedisClient(redisURL string) (*redis.Client, error) {
+func newRedisClient(redisURL string) (*redis.Client, error) {
 	opts, err := redis.ParseURL(redisURL)
 	if err != nil {
 		return nil, err
@@ -24,10 +23,10 @@ func NewRedisClient(redisURL string) (*redis.Client, error) {
 	return client, err
 }
 
-// NewRedis Repository wraps redis client into RedirectRepository interface
+// NewRedisRepository wraps redis client into RedirectRepository interface
 func NewRedisRepository(redisURL string) (shortener.RedirectRepository, error) {
 	repo := &redisRepository{}
-	client, err := NewRedisClient(redisURL)
+	client, err := newRedisClient(redisURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "repository.NewRedisRepository")
 	}
