@@ -1,0 +1,10 @@
+port: 8000
+URL_DB : "mongo"
+
+redis:
+  uri: "redis://default:redispw@localhost:49154"
+
+mongo:
+  uri: "mongodb://mongodb:27017"
+  name: "url-Short-Db"
+  
