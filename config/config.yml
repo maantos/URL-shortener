@@ -1,5 +1,5 @@
 port: 8000
-URL_DB : "mongo"
+URL_DB : "redis"
 
 redis:
   uri: "redis://default:redispw@localhost:49154"
