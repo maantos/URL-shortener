@@ -11,4 +11,4 @@ Usage:
     
     we can then use the code to redirect to the page, just paste in the browser:
         
-        localhost:8000/eQEwsUb4g or use curl -XGET  curl -XPOST localhost:8000/eQEwsUb4g
+        localhost:8000/eQEwsUb4g or use curl -XGET localhost:8000/eQEwsUb4g
