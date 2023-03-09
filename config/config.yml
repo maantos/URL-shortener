@@ -2,7 +2,7 @@ port: 8000
 URL_DB : "redis"
 
 redis:
-  uri: "redis://default:redispw@localhost:49154"
+  uri: "redis://@localhost:6379"
 
 mongo:
   uri: "mongodb://mongodb:27017"

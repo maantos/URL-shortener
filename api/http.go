@@ -1,13 +1,12 @@
 package api
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	js "github.com/maantos/urlShortener/serializer/json"
-	ms "github.com/maantos/urlShortener/serializer/msgpck"
 	"github.com/maantos/urlShortener/shortener"
 	"github.com/pkg/errors"
 )
@@ -36,13 +35,6 @@ func setupResponse(rw http.ResponseWriter, contentType string, body []byte, stat
 	}
 }
 
-func (h *handler) serializer(contentType string) shortener.RedirectSerializer {
-	if contentType == "application/x-msgpack" {
-		return &ms.Redirect{}
-	}
-	return &js.Redirect{}
-}
-
 func (h *handler) Get(rw http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 	redirect, err := h.redirectService.Find(code)
@@ -66,7 +58,11 @@ func (h *handler) Post(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	redirect, err := h.serializer(contentType).Decode(requestBody)
+	redirect := &shortener.Redirect{}
+	if err := json.Unmarshal(requestBody, redirect); err != nil {
+		http.Error(rw, "error decoding request body", http.StatusInternalServerError)
+		return
+	}
 
 	if err != nil {
 		http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -84,7 +80,10 @@ func (h *handler) Post(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseBody, err := h.serializer(contentType).Encode(redirect)
+	responseBody, err := json.Marshal(redirect)
+	if err != nil {
+		http.Error(rw, "error encoding response body", http.StatusInternalServerError)
+	}
 	if err != nil {
 		http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
